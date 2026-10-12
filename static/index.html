@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111b3d" />
+  <meta name="description" content="교사가 타이핑하는 즉시 학생에게 보이는 실시간 교실 퀴즈" />
+  <title>톡톡 라이브 퀴즈</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/client.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="site-header">
+      <a href="/" class="brand" aria-label="톡톡 라이브 퀴즈 홈">
+        <span class="brand-mark" aria-hidden="true">✦</span><span>톡톡 <b>라이브 퀴즈</b></span>
+      </a>
+      <div class="header-right"><span class="online-dot" id="connectionDot"></span><span id="connectionText">수업을 즐겁게</span></div>
+    </header>
+    <main>
+      <section id="homeView" class="view home-view" hidden>
+        <div class="hero"><span class="eyebrow">LIVE CLASSROOM GAME</span><h1>문제를 쓰는 순간,<br/><span>퀴즈가 시작돼요!</span></h1>
+          <p>문제를 미리 만들 필요 없어요. 수업 중에 교사가 입력하면<br class="desktop-only"/> 학생들 화면에도 실시간으로 나타납니다.</p>
+          <div class="hero-dots" aria-hidden="true"><span>✏️ 바로 입력</span><span>⚡ 실시간 반영</span><span>🏆 스피드 점수</span></div>
+        </div>
+        <div class="entry-grid">
+          <article class="entry-card teacher-entry"><div class="card-symbol">🧑‍🏫</div><h2>선생님이에요</h2><p>우리 반 퀴즈방을 만들고<br/>문제와 정답을 정해요.</p><button id="createRoomBtn" class="btn btn-primary btn-large">새 퀴즈방 만들기 <span aria-hidden="true">↗</span></button></article>
+          <article class="entry-card student-entry"><div class="card-symbol">🎒</div><h2>학생이에요</h2><p>선생님이 알려준 코드를 입력하고<br/>퀴즈방에 들어가요.</p>
+            <form id="joinForm" autocomplete="off">
+              <label for="roomCodeInput">참여 코드</label><input id="roomCodeInput" name="code" placeholder="예: ABC234" maxlength="6" spellcheck="false" autocapitalize="characters" required />
+              <label for="studentNameInput">이름 또는 별명</label><input id="studentNameInput" name="name" placeholder="예: 김하늘" maxlength="20" required />
+              <button class="btn btn-ink btn-large" type="submit">퀴즈방 입장하기 <span aria-hidden="true">→</span></button>
+            </form>
+          </article>
+        </div>
+        <p class="home-footnote">회원가입 없이 참여 · 퀴즈 문제는 교사에게만 수정 권한이 있어요</p>
+      </section>
+
+      <section id="teacherView" class="view teacher-view" hidden>
+        <div class="workspace-head">
+          <div><span class="eyebrow">TEACHER STUDIO</span><h1>교사 대시보드</h1><p>교사가 타이핑하는 내용이 학생들에게 바로 전송됩니다.</p></div>
+          <div class="code-panel"><span class="code-label">우리 반 참여 코드</span><strong id="teacherCode" class="room-code">------</strong><div class="code-actions"><button class="btn btn-mini" id="copyCodeBtn">코드 복사</button><button class="btn btn-mini" id="copyLinkBtn">학생 링크 복사</button></div></div>
+        </div>
+        <div class="status-strip"><div><span id="teacherStatus" class="state-chip">🟡 문제 준비 중</span><span class="status-info">현재 <b id="teacherRound">0</b>번 문제</span></div><div class="status-numbers"><span>👥 <b id="teacherCount">0</b>명 입장</span><span>✅ <b id="teacherSubmitted">0</b>명 제출</span></div></div>
+        <div class="teacher-grid">
+          <div class="stack">
+            <div class="panel editor-panel">
+              <div class="panel-top"><div><span class="section-label">01 / QUIZ MAKER</span><h2>문제 만들기</h2></div><span class="tiny-highlight">⚡ 실시간 전송</span></div>
+              <label for="questionInput" class="field-title">질문</label><textarea id="questionInput" rows="3" maxlength="500" placeholder="여기에 문제를 적어 주세요. 입력하는 순간 학생 화면에 나타나요!"></textarea>
+              <div class="options-heading"><span class="field-title">보기</span><span class="hint-inline">정답에만 ○ 표시해 주세요</span></div>
+              <div id="teacherOptions" class="editor-options">
+                <div class="editor-option"><span class="option-letter letter-0">A</span><input data-opt="0" maxlength="160" placeholder="첫 번째 보기" aria-label="보기 A"/><label class="correct-choice"><input type="radio" name="correct" value="0" aria-label="정답 A"/><span class="correct-label">정답</span></label></div>
+                <div class="editor-option"><span class="option-letter letter-1">B</span><input data-opt="1" maxlength="160" placeholder="두 번째 보기" aria-label="보기 B"/><label class="correct-choice"><input type="radio" name="correct" value="1" aria-label="정답 B"/><span class="correct-label">정답</span></label></div>
+                <div class="editor-option"><span class="option-letter letter-2">C</span><input data-opt="2" maxlength="160" placeholder="세 번째 보기" aria-label="보기 C"/><label class="correct-choice"><input type="radio" name="correct" value="2" aria-label="정답 C"/><span class="correct-label">정답</span></label></div>
+                <div class="editor-option"><span class="option-letter letter-3">D</span><input data-opt="3" maxlength="160" placeholder="네 번째 보기" aria-label="보기 D"/><label class="correct-choice"><input type="radio" name="correct" value="3" aria-label="정답 D"/><span class="correct-label">정답</span></label></div>
+              </div>
+              <div class="secret-note">🔒 정답 선택 표시는 선생님 화면에만 보이고 학생에게는 전달되지 않아요.</div>
+              <div class="multiplier-editor">
+                <label for="multiplierInput" class="field-title">✨ 이번 문제 점수 배수</label>
+                <div class="multiplier-controls">
+                  <div class="multiplier-presets" role="group" aria-label="빠른 점수 배수 선택">
+                    <button type="button" class="multiplier-preset selected" data-multiplier="1" aria-pressed="true">1배</button>
+                    <button type="button" class="multiplier-preset" data-multiplier="2" aria-pressed="false">2배</button>
+                    <button type="button" class="multiplier-preset" data-multiplier="3" aria-pressed="false">3배</button>
+                  </div>
+                  <div class="multiplier-custom"><span>직접 입력</span><input type="number" inputmode="decimal" id="multiplierInput" min="0.01" max="100" step="0.01" value="1" aria-label="이번 문제 점수 배수"/><b>배</b></div>
+                </div>
+                <p class="multiplier-help">예: 1.5배, 2.25배 · 0.01~100배, 소수 둘째 자리까지 · 정답 기본점수와 속도 보너스에 모두 적용</p>
+              </div>
+              <div class="primary-actions"><button id="startBtn" class="btn btn-primary btn-main">▶ 퀴즈 시작</button><button id="closeBtn" class="btn btn-danger btn-main" hidden>■ 퀴즈 종료 · 순위 공개</button><button id="nextBtn" class="btn btn-primary btn-main" hidden>✏️ 다음 문제 만들기</button></div>
+              <p id="teacherActionHint" class="action-hint">학생 입장 → 문제 입력 → 정답 선택 → 퀴즈 시작!</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="panel preview-panel"><div class="panel-top"><div><span class="section-label">02 / STUDENT PREVIEW</span><h2>학생 화면 미리보기</h2></div><span class="small-pill">👀 보기</span></div><div id="teacherPreview" class="preview-viewport"></div></div>
+            <div class="panel roster-panel"><div class="panel-top"><div><span class="section-label">03 / CLASSROOM</span><h2 id="rosterTitle">참여 학생</h2></div><span id="rosterCount" class="small-pill">0명</span></div><div id="teacherRoster" class="roster-list"><p class="empty-hint">학생들이 입장하면 여기에 나타나요.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="studentView" class="view student-view" hidden>
+        <div class="student-head"><div><span class="eyebrow">LET'S PLAY!</span><h1>오늘의 라이브 퀴즈 🎯</h1></div><div class="student-identity"><span id="studentNameBadge">나의 이름</span><span id="studentCodeBadge">------</span></div></div>
+        <div class="student-stats"><span id="studentStateChip" class="state-chip">🟡 대기 중</span><span>👥 <b id="studentCount">0</b>명 참여</span><span>🏆 내 점수 <b id="studentScore">0</b>점</span></div>
+        <div class="student-card"><div class="student-card-top"><span class="round-meta"><span id="studentQuestionCount" class="round-label">문제 준비 중</span><span id="studentMultiplier" class="multiplier-badge">✨ 1배 문제</span></span><span id="studentActivity" class="activity-indicator">● 실시간 연결</span></div><h2 id="studentQuestion" class="student-question">선생님이 문제를 작성하고 있어요 ✏️</h2><p id="studentInstruction" class="student-instruction">문제와 보기가 여기에 바로 나타납니다.</p><div id="studentChoices" class="student-choices"></div><div id="studentResponseNote" class="response-note" aria-live="polite"></div></div>
+        <div id="studentResults" class="student-results" hidden></div>
+        <p class="student-footnote">정답은 (기본 1,000점 + 속도 보너스 최대 500점) × 이번 문제 배수! 동점 보정은 별도예요.</p>
+      </section>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    </main>
+    <footer class="site-footer">톡톡 라이브 퀴즈 <span>·</span> 교실에서 만나는 실시간 배움</footer>
+  </div>
+</body>
+</html>
